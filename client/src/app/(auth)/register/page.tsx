@@ -1,5 +1,10 @@
+import RegisterForm from "@/app/(auth)/register/register-form";
+
 export default function RegisterPage() {
   return (
-    <div>Register page</div>
+    <div>
+      <h3 className="text-xl font-semibold text-center">Đăng ký</h3>
+      <div className="flex justify-center"><RegisterForm /></div>
+    </div>
   )
 }
