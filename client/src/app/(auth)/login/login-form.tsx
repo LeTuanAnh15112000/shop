@@ -14,10 +14,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { LoginBody, LoginBodyType } from "@/schemaValidations/auth.schema";
 import envConfig from "../../../../config";
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
+import { useAppContext } from "@/app/AppProvider";
 
 export default function LoginForm() {
-  const { toast } = useToast()
+  const { toast } = useToast();
+  const { setSessionToken } = useAppContext();
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
@@ -50,7 +52,23 @@ export default function LoginForm() {
       });
       toast({
         description: result.payload.message,
-      })
+      });
+      const resultFromNextServer = await fetch("/api/auth/", {
+        method: "POST",
+        body: JSON.stringify(result),
+        headers: { "Content-Type": "application/json" },
+      }).then(async (res) => {
+        const payload = await res.json();
+        const data = {
+          status: res.status,
+          payload,
+        };
+        if (!res.ok) {
+          throw data;
+        }
+        return data;
+      });
+      setSessionToken(resultFromNextServer.payload.data.token);
     } catch (error: any) {
       const errors = error.payload.errors as {
         field: string;
@@ -59,7 +77,7 @@ export default function LoginForm() {
       const status = error.status as number;
       if (status === 422) {
         errors.forEach((error) => {
-          form.setError(error.field as 'email' | 'password', {
+          form.setError(error.field as "email" | "password", {
             type: "server",
             message: error.message,
           });
@@ -68,8 +86,8 @@ export default function LoginForm() {
         toast({
           title: "Lỗi",
           description: error.payload.message,
-          variant: "destructive"
-        })
+          variant: "destructive",
+        });
       }
     }
   }
