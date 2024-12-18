@@ -16,9 +16,17 @@ import {
   RegisterBody,
   RegisterBodyType,
 } from "@/schemaValidations/auth.schema";
-import envConfig from "../../../../config";
+import authApiRequest from "@/apiRequests/auth";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { handleErrorApi } from "@/lib/utils";
+import { useState } from "react";
 
 export default function RegisterForm() {
+    const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
+
   const form = useForm<RegisterBodyType>({
     resolver: zodResolver(RegisterBody),
     defaultValues: {
@@ -30,19 +38,31 @@ export default function RegisterForm() {
   });
 
   async function onSubmit(values: RegisterBodyType) {
-    const result = await fetch(`${envConfig.NEXT_PUBLIC_API_ENDPOINT}/auth/register`, {
-      body: JSON.stringify(values),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: "POST",
-    }).then((res) => res.json())
-    // console.log(result);
+    if (loading) return;
+    setLoading(true);
+    try {
+      const result = await authApiRequest.register(values);
+      toast({
+        description: result.payload.message,
+      });
+      await authApiRequest.auth({ sessionToken: result.payload.data.token });
+      router.push("/me");
+    } catch (error: any) {
+      handleErrorApi({
+        error,
+        setError: form.setError,
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 max-w-[600px] flex-shrink-0 w-full">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-2 max-w-[600px] flex-shrink-0 w-full"
+      >
         <FormField
           control={form.control}
           name="name"
@@ -63,7 +83,7 @@ export default function RegisterForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Email"   {...field} />
+                <Input placeholder="Email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -95,7 +115,9 @@ export default function RegisterForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="!mt-12 w-full">Submit</Button>
+        <Button type="submit" className="!mt-12 w-full">
+          Submit
+        </Button>
       </form>
     </Form>
   );
