@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import { Toaster } from "@/components/ui/toaster"
 import AppProvider from "@/app/AppProvider";
 import { cookies } from "next/headers";
+import SlideSession from "@/components/slide-sesstion";
 const inter = Inter({subsets: ["vietnamese"]});
 
 export const metadata: Metadata = {
@@ -31,7 +32,11 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Header />
-          <AppProvider initialSessionToken={sessionToken?.value }>{children}</AppProvider>
+          <AppProvider initialSessionToken={sessionToken?.value }>
+            {children} 
+            {/* component SlideSession phụ trách việc Tự động gia hạn thời gian hết hạn session */}
+            <SlideSession />
+          </AppProvider>
         </ThemeProvider>
         <Toaster />
       </body>
