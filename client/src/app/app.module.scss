@@ -1,0 +1,42 @@
+.products {
+  width: 96%;
+  max-width: 1200px;
+  margin: 0 auto;
+  &_title {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 45px;
+  }
+  &_add {
+    text-align: right;
+    margin-bottom: 15px;
+  }
+  &_table {
+    width: 100%;
+    td,
+    th {
+      border: 1px solid #fff;
+      padding: 10px;
+      text-align: center;
+    }
+  }
+
+  &_item {
+    width: 100%;
+  }
+  &_img {
+    display: flex;
+    justify-content: center;
+    img {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+    }
+  }
+  &_btn {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}

@@ -15,32 +15,35 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { handleErrorApi } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   CreateProductBody,
   CreateProductBodyType,
+  ProductResType,
+  UpdateProductBodyType,
 } from "@/schemaValidations/product.schema";
 import productApiRequest from "@/apiRequests/product";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 
-export default function ProductAddForm() {
+type Product = ProductResType["data"];
+export default function ProductAddForm({ product }: { product?: Product }) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const form = useForm<CreateProductBodyType>({
     resolver: zodResolver(CreateProductBody),
     defaultValues: {
-      name: "",
-      price: 0,
-      description: "",
-      image: "",
+      name: product?.name ?? "",
+      price: product?.price ?? 0,
+      description: product?.description ?? "",
+      image: product?.image ?? "",
     },
   });
-
-  async function onSubmit(values: CreateProductBodyType) {
-    if (loading) return;
+  const image = form.watch("image");
+  const createProduct = async (values: CreateProductBodyType) => {
     setLoading(true);
     try {
       const formData = new FormData();
@@ -62,6 +65,42 @@ export default function ProductAddForm() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+  const updateProduct = async (_values: UpdateProductBodyType) => {
+    if (!product) return;
+    setLoading(true);
+    let values = _values;
+    try {
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file as Blob);
+        const uploadImageResult = await productApiRequest.uploadImage(formData);
+        const imageUrl = uploadImageResult.payload.data;
+        values = {
+          ...values,
+          image: imageUrl,
+        };
+      }
+      const result = await productApiRequest.update(product.id, values);
+      toast({
+        description: result.payload.message,
+      });
+    } catch (error: any) {
+      handleErrorApi({
+        error,
+        setError: form.setError,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  async function onSubmit(values: CreateProductBodyType) {
+    if (loading) return;
+    if (product) {
+      await updateProduct(values);
+    } else {
+      await createProduct(values);
     }
   }
 
@@ -120,6 +159,7 @@ export default function ProductAddForm() {
                 <Input
                   type="file"
                   accept="image/*"
+                  ref={inputRef}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
@@ -127,19 +167,18 @@ export default function ProductAddForm() {
                       field.onChange("http://localhost:3000/" + file.name);
                     }
                   }}
-                  onClick={(e: any) => e.target.value = null}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        {file && (
+        {(file || image) && (
           <div>
             <Image
               width={400}
               height={400}
-              src={URL.createObjectURL(file)}
+              src={file ? URL.createObjectURL(file) : image}
               alt="preview"
               className="w-24 h-24 object-cover"
               unoptimized
@@ -150,7 +189,10 @@ export default function ProductAddForm() {
               size={"sm"}
               onClick={() => {
                 setFile(null);
-                form.setValue('image', '')
+                form.setValue("image", "");
+                if (inputRef.current) {
+                  inputRef.current.value = "";
+                }
               }}
             >
               Xóa hình ảnh
@@ -158,7 +200,7 @@ export default function ProductAddForm() {
           </div>
         )}
         <Button type="submit" className="!mt-12 w-full">
-          Thêm sản phẩm
+          {product ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
         </Button>
       </form>
     </Form>
