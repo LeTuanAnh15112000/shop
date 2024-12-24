@@ -26,5 +26,5 @@ export default function Logout() {
       controller.abort();
     };
   }, [sessionToken, router, pathName]);
-  return <div>logout</div>;
+  return <div></div>;
 }

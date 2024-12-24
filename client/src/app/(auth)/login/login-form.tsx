@@ -32,15 +32,19 @@ export default function LoginForm() {
   });
 
   async function onSubmit(values: LoginBodyType) {
-    if(loading) return
+    if (loading) return;
     setLoading(true);
     try {
       const result = await authApiRequest.login(values);
-      await authApiRequest.auth({ sessionToken: result.payload.data.token, expiresAt: result.payload.data.expiresAt });
+      await authApiRequest.auth({
+        sessionToken: result.payload.data.token,
+        expiresAt: result.payload.data.expiresAt,
+      });
       toast({
         description: result.payload.message,
       });
-      router.push("/me");
+      router.push("/");
+      router.refresh();
     } catch (error: any) {
       handleErrorApi({
         error,

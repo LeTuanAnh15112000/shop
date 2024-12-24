@@ -4,18 +4,25 @@ import style from "../app.module.scss";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import DeleteProduct from "@/app/products/_components/delete-product";
+import { cookies } from "next/headers";
 
 export default async function ProductsListPage() {
+  const cookiesStore = await cookies();
+  const sessionToken = cookiesStore.get("sessionToken");
+  const isAuthenticated = Boolean(sessionToken);
   const { payload } = await productApiRequest.getList();
   const productList = payload.data;
   return (
     <div className={style.products}>
       <h2 className={style.products_title}>Products List</h2>
-      <div className={style.products_add}>
-        <Link href={"/products/add"}>
-          <Button variant={"secondary"}>Thêm sản phẩm</Button>
-        </Link>
-      </div>
+      {isAuthenticated && (
+        <div className={style.products_add}>
+          <Link href={"/products/add"}>
+            <Button variant={"secondary"}>Thêm sản phẩm</Button>
+          </Link>
+        </div>
+      )}
+
       <table className={style.products_table}>
         <thead>
           <tr>
@@ -32,23 +39,25 @@ export default async function ProductsListPage() {
               <td>{index + 1}</td>
               <td>
                 <div className={style.products_img}>
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  width={180}
-                  height={180}
-                />
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    width={180}
+                    height={180}
+                  />
                 </div>
               </td>
               <td>{product.name}</td>
               <td>{product.price}</td>
               <td>
-                <div className={style.products_btn}>
-                  <Link href={`/products/${product.id}`}>
-                    <Button variant={"outline"}>Edit</Button>
-                  </Link>
-                  <DeleteProduct product={product} />
-                </div>
+                {isAuthenticated && (
+                  <div className={style.products_btn}>
+                    <Link href={`/products/${product.id}`}>
+                      <Button variant={"outline"}>Edit</Button>
+                    </Link>
+                    <DeleteProduct product={product} />
+                  </div>
+                )}
               </td>
             </tr>
           ))}

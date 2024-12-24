@@ -1,7 +1,7 @@
-import Profile from "@/app/me/profile";
 import { cookies } from "next/headers";
 import accountApiRequest from "@/apiRequests/account";
 import ProfileForm from "@/app/me/profile-form";
+import style from "@/app/app.module.scss"
 
 export default async function MeProfile() {
   const cookieStore = await cookies();
@@ -10,8 +10,8 @@ export default async function MeProfile() {
   const result = await accountApiRequest.me(sessionToken?.value ?? "");
 
   return (
-    <div>
-      <h2>Xin chào {result.payload.data.name}</h2>
+    <div className={style.profile}>
+      <h2 className={style.title}>Xin chào {result.payload.data.name}</h2>
       <ProfileForm profile={result.payload.data} />
     </div>
   );
