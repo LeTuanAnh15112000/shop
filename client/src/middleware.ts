@@ -3,14 +3,17 @@ import { NextRequest } from "next/server";
 
 const privatePaths = ["/me"];
 const authPaths = ["/login", "/register"];
-
+const productEditRegex = /^\/products\/\d+\/edit$/;
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const pathName = request.nextUrl.pathname;
   const sessionToken = request.cookies.get("sessionToken")?.value;
 
   // Nếu chưa đăng nhập, chặn vào private paths
-  if (privatePaths.some((path) => pathName.startsWith(path) && !sessionToken)) {
+  if (
+    privatePaths.some((path) => pathName.startsWith(path) && !sessionToken) ||
+    (pathName.match(productEditRegex) && !sessionToken)
+  ) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -24,5 +27,5 @@ export function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/me","/login","/register"],
+  matcher: ["/me", "/login", "/register", "/products/:path*"],
 };

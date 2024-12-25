@@ -37,3 +37,6 @@ Cách làm này gần giống với phương pháp refresh token, chỉ khác l�
 3.Cùng với đó lưu 2 token trên vào 1 object token trong Nextjs client.
 4.Mỗi lần f5 lại web thì phải có logic xử lý lưu 2 token vào object client
 5.Dựa vào access token, ta có thể biết thời gian hết hạn của nó và canh me khi nào gần hết hạn thì cho gọi api refresh token. Chúng ta sẽ gọi api đó từ next client đến server backend và cũng gọi lại 'api/auth' giống như login.
+
+# Static Rendering vs Dynamic Rendering
+- Chúng ta dùng Dynamic Function trong compoent tree (children, parent, component, hoặc layout,...): cookies, headers, search params (?a=1&b=2) thì page sẽ chuyển thành dynamic rendering 

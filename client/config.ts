@@ -3,13 +3,15 @@ import { z } from "zod";
 // process.env.NEXT_PUBLIC_API_ENDPOINT
 const configSchema = z.object({
   NEXT_PUBLIC_API_ENDPOINT: z.string(),
-})
-
-const configProject = configSchema.safeParse({
-  NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT
+  NEXT_PUBLIC_URL: z.string(),
 });
 
-if(!configProject.success) {
+const configProject = configSchema.safeParse({
+  NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT,
+  NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
+});
+
+if (!configProject.success) {
   console.error(configProject.error.issues);
   throw new Error("Các giá trị khai báo trong file .env không hợp lệ");
 }

@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import DeleteProduct from "@/app/products/_components/delete-product";
 import { cookies } from "next/headers";
+import type { Metadata } from 'next'
+ 
+export const metadata: Metadata = {
+  title: 'Danh sách sản phẩm',
+}
 
 export default async function ProductsListPage() {
   const cookiesStore = await cookies();
@@ -39,12 +44,24 @@ export default async function ProductsListPage() {
               <td>{index + 1}</td>
               <td>
                 <div className={style.products_img}>
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={180}
-                    height={180}
-                  />
+                  {isAuthenticated && (
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      width={180}
+                      height={180}
+                    />
+                  )}
+                  {!isAuthenticated && (
+                    <Link href={`/products/${product.id}`}>
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        width={180}
+                        height={180}
+                      />
+                    </Link>
+                  )}
                 </div>
               </td>
               <td>{product.name}</td>
@@ -52,10 +69,17 @@ export default async function ProductsListPage() {
               <td>
                 {isAuthenticated && (
                   <div className={style.products_btn}>
-                    <Link href={`/products/${product.id}`}>
+                    <Link href={`/products/${product.id}/edit/`}>
                       <Button variant={"outline"}>Edit</Button>
                     </Link>
                     <DeleteProduct product={product} />
+                  </div>
+                )}
+                {!isAuthenticated && (
+                  <div className={style.products_btn}>
+                    <Link href={`/products/${product.id}`}>
+                      <Button variant={"outline"}>Xem chi tiết</Button>
+                    </Link>
                   </div>
                 )}
               </td>

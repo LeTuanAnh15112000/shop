@@ -15,5 +15,5 @@ export default function Profile() {
     };
     fetchRequest();
   }, []);
-  return <div>Profile nè</div>;
+  return <div>Profile</div>;
 }
