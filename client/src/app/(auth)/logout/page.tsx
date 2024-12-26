@@ -1,9 +1,11 @@
 "use client";
 import authApiRequest from "@/apiRequests/auth";
+import { useAppContext } from "@/app/app-provider";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect } from "react";
 
 function LogoutLogic() {
+  const { setUser } = useAppContext();
   const router = useRouter();
   const pathName = usePathname();
   const searchParam = useSearchParams();
@@ -15,6 +17,7 @@ function LogoutLogic() {
       authApiRequest
         .logoutFromNextClientToNextServer(true, signal)
         .then(() => {
+          setUser(null)
           router.push(`/login?redirectForm=${pathName}`);
         })
         .catch((error) => {
@@ -24,7 +27,7 @@ function LogoutLogic() {
     return () => {
       controller.abort();
     };
-  }, [sessionToken, router, pathName]);
+  }, [sessionToken, router, pathName, setUser]);
   return <div></div>;
 }
 

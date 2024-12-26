@@ -18,8 +18,10 @@ import authApiRequest from "@/apiRequests/auth";
 import { useRouter } from "next/navigation";
 import { handleErrorApi } from "@/lib/utils";
 import { useState } from "react";
+import { useAppContext } from "@/app/app-provider";
 
 export default function LoginForm() {
+  const { setUser } = useAppContext();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
@@ -43,6 +45,7 @@ export default function LoginForm() {
       toast({
         description: result.payload.message,
       });
+      setUser(result.payload.data.account);
       router.push("/");
       router.refresh();
     } catch (error: any) {

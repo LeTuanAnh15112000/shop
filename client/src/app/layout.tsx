@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import Header from "@/components/Header";
+// import Header from "@/components/Header";
 import { Toaster } from "@/components/ui/toaster";
 import AppProvider from "@/app/app-provider";
 import SlideSession from "@/components/slide-sesstion";
-import { AccountResType } from "@/schemaValidations/account.schema";
 const inter = Inter({ subsets: ["vietnamese"] });
 import type { Viewport } from "next";
-
+import Header from "@/components/HeaderWrapper";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -29,7 +28,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user: AccountResType["data"] | null = null;
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
@@ -39,8 +37,8 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AppProvider user={user}>
-            <Header user={user} />
+          <AppProvider>
+            <Header/>
             {children}
             {/* component SlideSession phụ trách việc Tự động gia hạn thời gian hết hạn session */}
             <SlideSession />

@@ -1,10 +1,13 @@
+'use client'
 import ButtonLogout from "@/components/button-logout";
 import { ModeToggle } from "@/components/ModeToggle";
 import Link from "next/link";
 import style from "./style.module.scss";
-import { AccountResType } from "@/schemaValidations/account.schema";
+import { useAppContext } from "@/app/app-provider";
 
-export default async function Header({user}:{user: AccountResType['data'] | null}) {
+export default function Header() {
+  const { user } = useAppContext();
+
   return (
     <div className={style.header}>
       <ul>
@@ -19,7 +22,7 @@ export default async function Header({user}:{user: AccountResType['data'] | null
         </li>
       </ul>
       <ul>
-        {user?.name ? (
+        {user ? (
           ""
         ) : (
           <>
@@ -31,14 +34,16 @@ export default async function Header({user}:{user: AccountResType['data'] | null
             </li>
           </>
         )}
-        {user?.name ? (
+        {user ? (
           <li>
             <ButtonLogout />
           </li>
         ) : (
           ""
         )}
-        <li><Link href="/me">Xin chào {user?.name}</Link></li>
+        <li>
+          <Link href="/me">Xin chào {user?.name}</Link>
+        </li>
         <li>
           <ModeToggle />
         </li>

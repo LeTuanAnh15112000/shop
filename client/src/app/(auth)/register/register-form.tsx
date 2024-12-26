@@ -21,9 +21,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { handleErrorApi } from "@/lib/utils";
 import { useState } from "react";
+import { useAppContext } from "@/app/app-provider";
 
 export default function RegisterForm() {
-    const [loading, setLoading] = useState(false);
+  const { setUser } = useAppContext();
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -42,10 +44,14 @@ export default function RegisterForm() {
     setLoading(true);
     try {
       const result = await authApiRequest.register(values);
-      await authApiRequest.auth({ sessionToken: result.payload.data.token, expiresAt: result.payload.data.expiresAt });
+      await authApiRequest.auth({
+        sessionToken: result.payload.data.token,
+        expiresAt: result.payload.data.expiresAt,
+      });
       toast({
         description: result.payload.message,
       });
+      setUser(result.payload.data.account);
       router.push("/me");
     } catch (error: any) {
       handleErrorApi({
