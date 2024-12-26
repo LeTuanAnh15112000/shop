@@ -11,11 +11,8 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  // read route params
-  // fetch data
   const { payload } = await getDetail(Number(params.id));
   const product = payload.data;
-
   return {
     title: 'Edit sản phẩm ' + product.name,
   };

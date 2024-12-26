@@ -13,9 +13,11 @@ export default async function MeProfile() {
   const sessionToken = cookieStore.get("sessionToken");
   //Vì dùng cookie nên api này không được cached trên server
   const result = await accountApiRequest.me(sessionToken?.value ?? "");
-
+  // console.log(result);
+  
   return (
     <div className={style.profile}>
+      le tuan anh
       <h2 className={style.title}>Xin chào {result.payload.data.name}</h2>
       <ProfileForm profile={result.payload.data} />
     </div>
