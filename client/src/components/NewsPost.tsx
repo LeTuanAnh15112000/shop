@@ -4,6 +4,7 @@ import styles from "../app/app.module.scss";
 import dayjs from "dayjs";
 import { useState } from "react";
 
+type FetchNewsResponse = { data: NewsProps[]; totalCount: number };
 export default function NewsPost({
   data,
   page,
@@ -18,12 +19,13 @@ export default function NewsPost({
   const [posts, setPosts] = useState(data);
   const [newPage, setNewPage] = useState(page + 1);
   const [isLoadMore, setIsLoadMore] = useState(true);
+  console.log(posts);
   const handleLoadMore = async () => {
     try {
       let res = await fetch("/api/news/get-list?page=" + newPage);
-      res = await res.json();
+      const { data, totalCount }: FetchNewsResponse = await res.json();
       if (res) {
-        console.log(res);
+        setPosts((prevPosts) => [...prevPosts, ...data]);
       }
     } catch (error) {
       throw Error("Lỗi khi get api Next server");
