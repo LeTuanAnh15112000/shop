@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 export default function ButtonLogout() {
-  const {setUser} = useAppContext();
+  const { setUser } = useAppContext();
   const router = useRouter();
   const pathName = usePathname();
   const handleLogout = async () => {
@@ -20,10 +20,10 @@ export default function ButtonLogout() {
         router.push(`/login?redirectForm=${pathName}`);
       });
     } finally {
-      setUser(null)
+      setUser(null);
       router.refresh();
-      localStorage.removeItem('sessionToken')
-      localStorage.removeItem('sessionTokenExpiresAt')
+      localStorage.removeItem("sessionToken");
+      localStorage.removeItem("sessionTokenExpiresAt");
     }
   };
   return (
