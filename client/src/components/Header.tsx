@@ -20,6 +20,9 @@ export default function Header() {
         <li>
           <Link href="/products/">Sản phẩm</Link>
         </li>
+        <li>
+          <Link href="/news">News</Link>
+        </li>
       </ul>
       <ul>
         {user ? (
