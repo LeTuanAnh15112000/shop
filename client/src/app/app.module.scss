@@ -74,7 +74,7 @@
   }
   &_block {
     font-size: 18px;
-    margin-right: 80px;
+    margin-right: 70px;
     width: 100%;
     max-width: 200px;
     display: flex;
@@ -91,6 +91,7 @@
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    margin-right: 20px;
   }
 }
 

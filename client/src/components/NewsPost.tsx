@@ -1,17 +1,18 @@
 "use client";
-import { NewsProps } from "@/_libs/microcms";
+import { NewsProps, NewsPropsArray } from "@/_libs/microcms";
 import styles from "../app/app.module.scss";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-type FetchNewsResponse = { data: NewsProps[]; totalCount: number };
 export default function NewsPost({
   data,
   page,
   limit,
-  totalCount = 0,
+  totalCount,
 }: {
-  data: NewsProps;
+  data: NewsPropsArray;
   page: number;
   limit: number;
   totalCount: number;
@@ -19,15 +20,22 @@ export default function NewsPost({
   const [posts, setPosts] = useState(data);
   const [newPage, setNewPage] = useState(page + 1);
   const [isLoadMore, setIsLoadMore] = useState(true);
-  console.log(posts);
+  console.log(totalCount / limit);
   const handleLoadMore = async () => {
     try {
       let res = await fetch("/api/news/get-list?page=" + newPage);
-      const { data, totalCount }: FetchNewsResponse = await res.json();
-      if (res) {
-        setPosts((prevPosts) => [...prevPosts, ...data]);
+      res = await res.json();
+      if (res?.data?.contents) {
+        console.log(res);
+        setPosts((prev) => {
+          return [...prev, ...res?.data?.contents];
+        });
+        setNewPage((prev) => prev + 1);
+        if (totalCount / limit <= newPage) {
+          setIsLoadMore(false);
+        }
       }
-    } catch (error) {
+    } catch {
       throw Error("Lỗi khi get api Next server");
     }
   };
@@ -35,7 +43,7 @@ export default function NewsPost({
     <div className={styles.news}>
       <ul className={styles.news_list}>
         {posts &&
-          posts.map((post: any) => (
+          posts.map((post: NewsProps) => (
             <li key={post.id} className={styles.news_item}>
               <div className={styles.news_block}>
                 <span className={styles.news_cat}>
@@ -49,6 +57,9 @@ export default function NewsPost({
                 className={styles.news_title}
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
+              <Link href={`/news/${post.id}`}>
+                <Button>Xem chi tiết</Button>
+              </Link>
             </li>
           ))}
       </ul>

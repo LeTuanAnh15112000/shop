@@ -25,11 +25,22 @@ export type NewsProps = {
   categories: { nameID: string };
 };
 
+export type NewsPropsArray = NewsProps[];
+
 export const getNewsPosts = async (queries?: MicroCMSQueries) => {
   const data = await client
     .get({
-      endpoint: "news", 
+      endpoint: "news",
       queries,
+    })
+    .catch(notFound);
+  return data;
+};
+
+export const getNewsDetailPost = async (id?: string) => {
+  const data = await client
+    .get({
+      endpoint: `news/${id}`,
     })
     .catch(notFound);
   return data;
