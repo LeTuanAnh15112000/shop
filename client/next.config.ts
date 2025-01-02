@@ -15,6 +15,12 @@ const nextConfig: NextConfig = {
         hostname: 'images.pexels.com',
         port: '',
         pathname: '/photos/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.microcms-assets.io',
+        port: '',
+        // pathname: '/photos/**',
       }
     ],
   },

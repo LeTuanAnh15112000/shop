@@ -22,6 +22,9 @@ export type NewsProps = {
   title: string;
   content: string;
   publishedAt: string;
+  eyecatch: {
+    url: string;
+  };
   categories: { nameID: string };
 };
 

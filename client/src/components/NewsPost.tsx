@@ -20,13 +20,11 @@ export default function NewsPost({
   const [posts, setPosts] = useState(data);
   const [newPage, setNewPage] = useState(page + 1);
   const [isLoadMore, setIsLoadMore] = useState(true);
-  console.log(totalCount / limit);
   const handleLoadMore = async () => {
     try {
       let res = await fetch("/api/news/get-list?page=" + newPage);
       res = await res.json();
       if (res?.data?.contents) {
-        console.log(res);
         setPosts((prev) => {
           return [...prev, ...res?.data?.contents];
         });

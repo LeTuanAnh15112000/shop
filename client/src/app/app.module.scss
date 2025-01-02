@@ -115,3 +115,27 @@
     }
   }
 }
+
+.post {
+  &_detail {
+    padding-top: 60px;
+    width: 94%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  &_title {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 60px;
+  }
+  &_image {
+    line-height: 0;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 45px;
+  }
+  &_content {
+    font-size: 18px;
+    line-height: 1.75;
+  }
+}
